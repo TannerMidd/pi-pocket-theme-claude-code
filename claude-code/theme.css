@@ -1,0 +1,6 @@
+/*
+ * Claude Code: Pi Pocket in the look of Claude's desktop app. layout.css is the look and the layout; colors.toml and
+ * colors-light.toml are the dark and light palettes; fonts/ has Source Serif 4 (SIL OFL, fonts/OFL.txt) for replies.
+ */
+@import "fonts/OFL.css";
+@import "layout.css";

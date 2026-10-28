@@ -1,0 +1,657 @@
+/*
+ * Claude Code's layout: Claude's desktop app. A flat window with the sidebar split off by one line, a narrow reading
+ * column, your messages as soft bubbles on the right, Pi's answers in a serif with no frame, quiet grey activity
+ * lines, and a rounded reply box with its buttons under it. Only tokens and parts
+ * (docs/extensions/reference/theme-surface.md), plus plain elements inside a part where noted.
+ */
+
+@font-face {
+    font-family: "Claude Serif";
+    src: url("fonts/SourceSerif4-Roman.woff2") format("woff2");
+    font-weight: 200 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Claude Serif";
+    src: url("fonts/SourceSerif4-Italic.woff2") format("woff2");
+    font-weight: 200 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* ─── Tokens ─── */
+
+:root {
+    --sans: "Pocket Inter", ui-sans-serif, system-ui, sans-serif;
+    --mono: "Pocket Mono", "Pocket Nerd Symbols", ui-monospace, monospace;
+    --serif: "Claude Serif", ui-serif, Georgia, serif;
+
+    /* Claude's clay: the spark, the send button, links. Everything else is grey. */
+    --clay: var(--o-accent);
+    --brand: var(--clay);
+    --spark: var(--clay);
+
+    --muted: color-mix(in oklab, var(--body) 62%, var(--bg));
+    --faint: color-mix(in oklab, var(--body) 50%, var(--bg));
+
+    /* Surfaces, as sampled: the window, the sidebar a step up, bubbles and the reply box two and three steps up. */
+    --panel: var(--o-bg-dark);
+    --bubble: var(--o-bg-light);
+    --field: color-mix(in srgb, var(--body) 13%, var(--bg));
+    --card: color-mix(in srgb, var(--body) 5%, var(--bg));
+    --card-2: color-mix(in srgb, var(--body) 9%, var(--bg));
+    --row-on: color-mix(in srgb, var(--body) 16%, var(--panel));
+    --code-bg: var(--o-bg-darker);
+    --line: color-mix(in srgb, var(--body) 14%, var(--bg));
+    --line-strong: color-mix(in srgb, var(--body) 22%, var(--bg));
+    --hair: color-mix(in srgb, var(--body) 11%, transparent);
+    --hair-2: color-mix(in srgb, var(--body) 18%, transparent);
+
+    --accent-fill: var(--clay);
+    --accent-ink: #fff;
+
+    /* Soft, app-like corners. */
+    --r-mark: 4px;
+    --r-tag: 5px;
+    --r-seg: 7px;
+    --r-row: 8px;
+    --r-control: 8px;
+    --r-card: 10px;
+    --r-window: 0px;
+    --r-sheet: 16px;
+    --r-float: 16px;
+    --r-bubble: 14px;
+    --r-box: 16px;
+
+    /* One flat window: no gaps or frames between the sidebar and the conversation. */
+    --gap-out: 0px;
+    --gap-in: 0px;
+    --border: 0px;
+    --window-border: transparent;
+    --window-border-active: transparent;
+    --window-ring: none;
+
+    --sh: rgb(0 0 0 / 0.45);
+    --shadow: none;
+    --pop: 0 0 0 1px var(--line), 0 20px 50px -18px var(--sh);
+
+    --leading: 1.6;
+
+    /* A narrow reading column, and the reply box a little wider than it. */
+    --transcript-width: clamp(min(640px, 100%), 60%, 760px);
+    --composer-width: calc(var(--transcript-width) + 48px);
+}
+
+:root[data-mode="light"] {
+    --muted: color-mix(in oklab, var(--body) 72%, var(--bg));
+    --faint: color-mix(in oklab, var(--body) 62%, var(--bg));
+    --field: #fff;
+    --code-bg: var(--o-bg-dark);
+    --row-on: color-mix(in srgb, var(--body) 9%, var(--panel));
+    --line: color-mix(in srgb, var(--body) 13%, var(--bg));
+    --sh: rgb(60 40 20 / 0.14);
+}
+
+::selection {
+    background: color-mix(in srgb, var(--clay) 30%, transparent);
+}
+
+/* ─── The frame ─── */
+
+[data-part~="app"] {
+    background: var(--bg);
+}
+
+[data-part~="sidebar"] {
+    border-inline-end: 1px solid var(--line);
+    background: var(--panel);
+}
+
+[data-part~="pane"] {
+    background: var(--bg);
+}
+
+[data-part~="topbar"] {
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+}
+
+[data-part~="topbar-title"] {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+[data-part~="topbar-sub"] {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* The π becomes Claude's spark, in clay. */
+[data-part~="brand-mark"] {
+    position: relative;
+    color: transparent;
+}
+
+[data-part~="brand-mark"]::after {
+    content: "✻";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--clay);
+    font-size: 1.3em;
+}
+
+/* ─── The sidebar: plain rows ─── */
+
+[data-part~="rail"] {
+    border-inline-end: 1px solid var(--line);
+}
+
+[data-part~="rail-button"][data-state~="open"] {
+    background: var(--row-on);
+    color: var(--text);
+}
+
+[data-part~="session-list-title"] {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+[data-part~="session-search"] {
+    border-color: transparent;
+    border-radius: var(--r-control);
+    background: none;
+}
+
+[data-part~="session-search"]:focus-within {
+    background: var(--row-on);
+}
+
+[data-part~="session-tabs"] {
+    border-radius: var(--r-control);
+    background: none;
+}
+
+[data-part~="segment-thumb"] {
+    background: var(--row-on);
+    box-shadow: none;
+}
+
+[data-part~="session-group-name"] {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+[data-part~="session-button"] {
+    border-radius: var(--r-row);
+    font-size: 14px;
+}
+
+[data-part~="session-button"]:not([aria-current="page"]) {
+    --text: var(--body);
+}
+
+[data-part~="session-button"][aria-current="page"] {
+    background: var(--row-on);
+}
+
+/* A session at rest shows no square, as Claude's list has none; one that works, waits, or failed keeps it. */
+[data-part~="session-row"][data-state="idle"] [data-part~="session-mark"] {
+    visibility: hidden;
+}
+
+/* ─── The conversation ─── */
+
+[data-part~="transcript"] {
+    gap: calc(18px * var(--space-y));
+}
+
+/* Your messages: a soft bubble on the right, with no name. */
+[data-part~="prompt"] {
+    width: fit-content;
+    max-width: min(80%, 620px);
+    margin-inline-start: auto;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: var(--r-bubble);
+    background: var(--bubble);
+    color: var(--text);
+    font-size: var(--text-size, 15px);
+}
+
+[data-part~="prompt"][data-from="me"] [data-part~="prompt-head"] {
+    display: none;
+}
+
+[data-part~="prompt-text"] {
+    padding-inline-start: 0;
+}
+
+/* Someone else's: on the left, their name above it. */
+[data-part~="prompt"]:not([data-from="me"]) {
+    margin-inline: 0 auto;
+}
+
+[data-part~="prompt-head"] {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+[data-part~="author-mark"] {
+    width: 18px;
+    height: 18px;
+    font-size: 8.5px;
+}
+
+[data-part~="prompt-author"] {
+    font-weight: 600;
+    color: var(--muted);
+}
+
+@media (hover: hover) {
+    [data-part~="prompt"]:hover {
+        background: color-mix(in srgb, var(--body) 4%, var(--bubble));
+    }
+}
+
+/* Pi's answers: a serif, a size up, no frame. */
+[data-part~="reply"] {
+    font-family: var(--serif);
+    font-size: calc(var(--text-size, 15px) + 1.5px);
+    line-height: 1.6;
+    color: var(--text);
+}
+
+[data-part~="reply"] :is(h1, h2, h3, h4) {
+    font-family: var(--serif);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+
+[data-part~="reply"] :is(strong, b) {
+    font-weight: 650;
+    color: var(--text);
+}
+
+[data-part~="reply"] a {
+    color: var(--text);
+    text-decoration-color: var(--faint);
+    text-underline-offset: 0.2em;
+}
+
+[data-part~="reply"] blockquote {
+    border-inline-start: 2px solid var(--line-strong);
+    color: var(--muted);
+}
+
+[data-part~="reply"] table {
+    font-family: var(--sans);
+    font-size: 0.86em;
+}
+
+[data-part~="reply"] th {
+    font-weight: 600;
+}
+
+/* Code in words: a small grey tag. */
+[data-part~="inline-code"] {
+    padding: 0.1em 0.35em;
+    border: 0;
+    border-radius: var(--r-tag);
+    background: var(--field);
+    color: var(--text);
+    font-size: 0.82em;
+}
+
+[data-part~="code-block"] {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--code-bg);
+}
+
+[data-part~="code-head"] {
+    border-bottom: 0;
+    background: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* Under an answer: small and quiet, in the app's sans. */
+[data-part~="reply-actions"] {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--faint);
+}
+
+@media (hover: hover) {
+    [data-part~="reply-actions"] {
+        opacity: 0.55;
+        transition: opacity var(--t-hover) var(--ease-out);
+    }
+
+    [data-part~="reply"]:hover [data-part~="reply-actions"],
+    [data-part~="reply-actions"]:focus-within {
+        opacity: 1;
+    }
+}
+
+/* ─── What Pi did: a grey line, and a quiet list when opened ─── */
+
+[data-part~="activity"],
+[data-part~="activity"][data-state~="open"] {
+    border-color: transparent;
+    background: none;
+}
+
+[data-part~="activity-head"],
+[data-part~="activity"][data-state~="open"] > [data-part~="activity-head"] {
+    min-height: 30px;
+    padding-inline: 0;
+    border-bottom-color: transparent;
+    border-radius: var(--r-row);
+    background: none;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+@media (hover: hover) {
+    [data-part~="activity-head"]:hover {
+        background: none;
+        color: var(--text);
+    }
+}
+
+[data-part~="timeline"] {
+    padding-inline: 0;
+}
+
+/* Marks: grey dots with the app's icon, the color only for trouble. */
+[data-part~="step-mark"] {
+    border: 0;
+    background: var(--card-2);
+    background-image: none;
+    box-shadow: 0 0 0 3px var(--bg);
+    color: var(--muted);
+}
+
+[data-part~="tool-call"]:is([data-state="failed"], [data-state="denied"]) [data-part~="step-mark"] {
+    background: var(--err-soft);
+    color: var(--err);
+}
+
+[data-part~="tool-call"][data-state="waiting"] [data-part~="step-mark"] {
+    background: var(--warn-soft);
+    color: var(--warn);
+}
+
+[data-part~="step-head"] {
+    font-size: 13.5px;
+}
+
+[data-part~="step-label"] {
+    font-family: var(--sans);
+    font-weight: 500;
+    text-transform: capitalize;
+    color: var(--body);
+}
+
+[data-part~="thinking"] [data-part~="step-detail"] {
+    color: var(--muted);
+}
+
+/* Inside a step (plain elements): the command and its output in grey boxes. */
+[data-part~="step-detail"] pre {
+    border: 1px solid var(--line);
+    border-radius: var(--r-control);
+    background: var(--code-bg);
+    color: var(--muted);
+}
+
+[data-part~="thinking"] [data-part~="step-detail"] > * {
+    border-color: var(--line);
+    border-radius: var(--r-control);
+}
+
+[data-part~="diff"] {
+    border-color: var(--line);
+    border-radius: var(--r-control);
+}
+
+/* ─── Pi at work: the spark turns ─── */
+
+[data-part~="live-line"] {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+[data-part~="live-mark"] {
+    position: relative;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+[data-part~="live-mark"]::after {
+    content: "✻";
+    position: absolute;
+    inset: -6px;
+    display: grid;
+    place-items: center;
+    color: var(--clay);
+    font-size: 18px;
+    animation: claude-spark 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes claude-spark {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(90deg) scale(0.82);
+    }
+
+    100% {
+        transform: rotate(180deg) scale(1);
+    }
+}
+
+/* ─── The reply box: a rounded field, its buttons under it ─── */
+
+[data-part~="message-box"] {
+    position: relative;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+[data-part~="message-box"]:focus-within {
+    border: 0;
+    box-shadow: none;
+}
+
+/* The field itself (a plain element) wears the box, with room on its end for Send. */
+[data-part~="message-box"] textarea {
+    min-height: 48px;
+    padding-block: 12px;
+    padding-inline: 16px 52px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-box);
+    background: var(--field);
+    color: var(--text);
+    transition: border-color var(--t-hover) var(--ease-out);
+}
+
+[data-part~="message-box"] textarea:focus {
+    border-color: var(--line-strong);
+}
+
+[data-part~="message-box"] textarea::placeholder {
+    color: var(--faint);
+}
+
+/* Send: inside the box, at its end. */
+[data-part~="send-button"] {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-end: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-control);
+    background: none;
+    color: var(--faint);
+}
+
+[data-part~="send-button"][data-state="ready"] {
+    background: var(--clay);
+    color: #fff;
+}
+
+/* The buttons under the box: bare icons, the model on the far end. */
+[data-part~="composer-tools"] {
+    padding-inline: 4px;
+    padding-block: 6px 0;
+}
+
+[data-part~="composer-button"] {
+    border-color: transparent;
+    background: none;
+    color: var(--muted);
+}
+
+[data-part~="model-chip"] {
+    order: 99;
+    --accent: var(--muted);
+    border: 0;
+    background: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body);
+}
+
+[data-part~="plan-chip"] {
+    border-color: transparent;
+    font-size: 13px;
+}
+
+[data-part~="plan-chip"][aria-pressed="true"] {
+    background: color-mix(in srgb, var(--clay) 14%, transparent);
+    color: var(--clay);
+}
+
+[data-part~="stop-button"] {
+    border-radius: var(--r-control);
+}
+
+@media (hover: hover) {
+    :is([data-part~="composer-button"], [data-part~="model-chip"]):hover {
+        background: var(--card-2);
+        color: var(--text);
+    }
+}
+
+[data-part~="status-line"] {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* ─── The home screen: a greeting, not a dashboard ─── */
+
+[data-part~="home-logo"] {
+    display: none;
+}
+
+[data-part~="home-facts"] {
+    border: 0;
+    background: none;
+}
+
+[data-part~="home-title"] {
+    margin-bottom: 10px;
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--text);
+}
+
+[data-part~="home-title"]::before {
+    content: "✻";
+    margin-inline-end: 0.35em;
+    color: var(--clay);
+    font-family: var(--sans);
+    font-size: 0.95em;
+}
+
+/* The words in it (plain elements) in the title's own color. */
+[data-part~="home-title"] * {
+    font-weight: 400;
+    color: inherit;
+}
+
+[data-part~="home-fact"] {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+[data-part~="home-colors"] {
+    display: none;
+}
+
+[data-part~="home-actions"] .button {
+    border-color: var(--line);
+    border-radius: var(--r-control);
+    background: none;
+}
+
+[data-part~="home-actions"] .button.primary {
+    border-color: transparent;
+    background: var(--clay);
+    color: #fff;
+}
+
+[data-part~="home-heading"] {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+/* ─── Sheets, menus, the launcher ─── */
+
+[data-part~="sheet"],
+[data-part~="launcher"],
+[data-part~="menu"] {
+    border: 1px solid var(--line);
+    background: var(--o-bg-light);
+}
+
+[data-part~="sheet-head"] {
+    border-bottom: 0;
+}
+
+[data-part~="launcher-row"][aria-selected="true"] {
+    background: var(--row-on);
+}
+
+/* ─── Phones ─── */
+
+@media (max-width: 699px) {
+    [data-part~="prompt"] {
+        max-width: 88%;
+    }
+
+    [data-part~="home-title"] {
+        font-size: 26px;
+    }
+}

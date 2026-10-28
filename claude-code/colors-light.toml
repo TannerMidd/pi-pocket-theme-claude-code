@@ -1,0 +1,23 @@
+# Claude Code (light): Claude's ivory paper, warm ink, and its clay a step deeper.
+mode = "light"
+
+accent = "#c6613f"
+selection = "#ecd9cf"
+
+background = "#faf9f5"
+dark_background = "#f5f4ee"
+darker_background = "#ebe9e1"
+lighter_background = "#f0eee6"
+
+foreground = "#2f2e2b"
+dark_foreground = "#73726c"
+light_foreground = "#1f1e1d"
+bright_foreground = "#141413"
+
+red = "#c0392b"
+yellow = "#9a6a00"
+orange = "#c6613f"
+green = "#2f7a3b"
+cyan = "#1f7a8c"
+blue = "#3a64c8"
+magenta = "#8a4bb0"

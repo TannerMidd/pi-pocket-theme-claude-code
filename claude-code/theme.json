@@ -1,0 +1,8 @@
+{
+    "themeApi": 1,
+    "name": "Claude Code",
+    "description": "Claude's desktop app: serif replies, your messages as bubbles on the right, a flat sidebar, a rounded reply box, and a clay spark.",
+    "author": "tanner",
+    "version": "1.0.0",
+    "minPocket": "0.20.0"
+}
