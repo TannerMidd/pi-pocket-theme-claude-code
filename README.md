@@ -7,7 +7,7 @@
 - One flat window: the sidebar split off by a single line, no gaps or tiles
 - A rounded reply box with Send inside it, and its buttons and the model under it
 - Quiet grey activity lines; color only for failures and approvals
-- The π becomes Claude's clay spark, which turns while Pi works
+- Pi keeps its own π, on the rail and the home screen, in clay
 - Dark (neutral greys, sampled from the app) and light (Claude's ivory) palettes: Colors → **Claude Code** follows the system's setting
 - CSS only: just the documented tokens and `data-part` names (`themeApi` 1, Pi Pocket 0.20.0 or later)
 

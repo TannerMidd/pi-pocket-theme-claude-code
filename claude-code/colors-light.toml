@@ -1,7 +1,7 @@
-# Claude Code (light): Claude's ivory paper, warm ink, and its clay a step deeper.
+# Claude Code (light): Claude's ivory paper, warm ink, and its clay a step deeper, for 4.5:1 text.
 mode = "light"
 
-accent = "#c6613f"
+accent = "#b0522f"
 selection = "#ecd9cf"
 
 background = "#faf9f5"
@@ -16,7 +16,7 @@ bright_foreground = "#141413"
 
 red = "#c0392b"
 yellow = "#9a6a00"
-orange = "#c6613f"
+orange = "#b0522f"
 green = "#2f7a3b"
 cyan = "#1f7a8c"
 blue = "#3a64c8"

@@ -28,13 +28,14 @@
     --mono: "Pocket Mono", "Pocket Nerd Symbols", ui-monospace, monospace;
     --serif: "Claude Serif", ui-serif, Georgia, serif;
 
-    /* Claude's clay: the spark, the send button, links. Everything else is grey. */
+    /* Claude's clay: Pi's π, the loaders, the send button. Everything else is grey. */
     --clay: var(--o-accent);
     --brand: var(--clay);
     --spark: var(--clay);
 
-    --muted: color-mix(in oklab, var(--body) 62%, var(--bg));
-    --faint: color-mix(in oklab, var(--body) 50%, var(--bg));
+    /* Quiet text that still reads (4.5:1 or more) on the window, the sidebar, and a bubble. */
+    --muted: color-mix(in oklab, var(--body) 72%, var(--bg));
+    --faint: color-mix(in oklab, var(--body) 62%, var(--bg));
 
     /* Surfaces, as sampled: the window, the sidebar a step up, bubbles and the reply box two and three steps up. */
     --panel: var(--o-bg-dark);
@@ -42,15 +43,16 @@
     --field: color-mix(in srgb, var(--body) 13%, var(--bg));
     --card: color-mix(in srgb, var(--body) 5%, var(--bg));
     --card-2: color-mix(in srgb, var(--body) 9%, var(--bg));
-    --row-on: color-mix(in srgb, var(--body) 16%, var(--panel));
+    --row-on: color-mix(in srgb, var(--body) 12%, var(--panel));
     --code-bg: var(--o-bg-darker);
     --line: color-mix(in srgb, var(--body) 14%, var(--bg));
     --line-strong: color-mix(in srgb, var(--body) 22%, var(--bg));
     --hair: color-mix(in srgb, var(--body) 11%, transparent);
     --hair-2: color-mix(in srgb, var(--body) 18%, transparent);
 
+    /* Text on clay: dark on the dark palette's lighter clay, white on the light palette's deeper one. */
     --accent-fill: var(--clay);
-    --accent-ink: #fff;
+    --accent-ink: #191919;
 
     /* Soft, app-like corners. */
     --r-mark: 4px;
@@ -85,8 +87,9 @@
 }
 
 :root[data-mode="light"] {
-    --muted: color-mix(in oklab, var(--body) 72%, var(--bg));
-    --faint: color-mix(in oklab, var(--body) 62%, var(--bg));
+    --muted: color-mix(in oklab, var(--body) 76%, var(--bg));
+    --faint: color-mix(in oklab, var(--body) 68%, var(--bg));
+    --accent-ink: #fff;
     --field: #fff;
     --code-bg: var(--o-bg-dark);
     --row-on: color-mix(in srgb, var(--body) 9%, var(--panel));
@@ -109,6 +112,11 @@
     background: var(--panel);
 }
 
+/* People: split off by a line too, as tiling takes away its own. */
+[data-part~="people-panel"] {
+    border-inline-start: 1px solid var(--line);
+}
+
 [data-part~="pane"] {
     background: var(--bg);
 }
@@ -127,22 +135,6 @@
 [data-part~="topbar-sub"] {
     font-size: 12px;
     color: var(--faint);
-}
-
-/* The π becomes Claude's spark, in clay. */
-[data-part~="brand-mark"] {
-    position: relative;
-    color: transparent;
-}
-
-[data-part~="brand-mark"]::after {
-    content: "✻";
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    color: var(--clay);
-    font-size: 1.3em;
 }
 
 /* ─── The sidebar: plain rows ─── */
@@ -170,6 +162,7 @@
 }
 
 [data-part~="session-search"]:focus-within {
+    border-color: var(--accent-line);
     background: var(--row-on);
 }
 
@@ -332,18 +325,6 @@
     color: var(--faint);
 }
 
-@media (hover: hover) {
-    [data-part~="reply-actions"] {
-        opacity: 0.55;
-        transition: opacity var(--t-hover) var(--ease-out);
-    }
-
-    [data-part~="reply"]:hover [data-part~="reply-actions"],
-    [data-part~="reply-actions"]:focus-within {
-        opacity: 1;
-    }
-}
-
 /* ─── What Pi did: a grey line, and a quiet list when opened ─── */
 
 [data-part~="activity"],
@@ -374,23 +355,11 @@
     padding-inline: 0;
 }
 
-/* Marks: grey dots with the app's icon, the color only for trouble. */
-[data-part~="step-mark"] {
-    border: 0;
-    background: var(--card-2);
-    background-image: none;
-    box-shadow: 0 0 0 3px var(--bg);
+/* Marks: what went well (and thoughts) in grey; trouble, approvals, and work keep the app's colors. The app's tint
+ * stays over the window's color, so the rule does not show through. */
+:is([data-part~="tool-call"][data-state="ok"], [data-part~="thinking"]) [data-part~="step-mark"] {
+    --tint: var(--card-2);
     color: var(--muted);
-}
-
-[data-part~="tool-call"]:is([data-state="failed"], [data-state="denied"]) [data-part~="step-mark"] {
-    background: var(--err-soft);
-    color: var(--err);
-}
-
-[data-part~="tool-call"][data-state="waiting"] [data-part~="step-mark"] {
-    background: var(--warn-soft);
-    color: var(--warn);
 }
 
 [data-part~="step-head"] {
@@ -426,43 +395,11 @@
     border-radius: var(--r-control);
 }
 
-/* ─── Pi at work: the spark turns ─── */
+/* ─── Pi at work: the app's own mark, a quieter line ─── */
 
 [data-part~="live-line"] {
     font-size: 14px;
     color: var(--muted);
-}
-
-[data-part~="live-mark"] {
-    position: relative;
-    border: 0;
-    background: none;
-    box-shadow: none;
-}
-
-[data-part~="live-mark"]::after {
-    content: "✻";
-    position: absolute;
-    inset: -6px;
-    display: grid;
-    place-items: center;
-    color: var(--clay);
-    font-size: 18px;
-    animation: claude-spark 2.4s var(--ease-in-out) infinite;
-}
-
-@keyframes claude-spark {
-    0% {
-        transform: rotate(0deg) scale(1);
-    }
-
-    50% {
-        transform: rotate(90deg) scale(0.82);
-    }
-
-    100% {
-        transform: rotate(180deg) scale(1);
-    }
 }
 
 /* ─── The reply box: a rounded field, its buttons under it ─── */
@@ -481,11 +418,11 @@
     box-shadow: none;
 }
 
-/* The field itself (a plain element) wears the box, with room on its end for Send. */
+/* The field itself (a plain element) wears the box. */
 [data-part~="message-box"] textarea {
     min-height: 48px;
     padding-block: 12px;
-    padding-inline: 16px 52px;
+    padding-inline: 16px;
     border: 1px solid var(--line);
     border-radius: var(--r-box);
     background: var(--field);
@@ -493,21 +430,17 @@
     transition: border-color var(--t-hover) var(--ease-out);
 }
 
+/* The box's focus: the accent's line, as the app's own box has. */
 [data-part~="message-box"] textarea:focus {
-    border-color: var(--line-strong);
+    border-color: var(--accent-line);
 }
 
 [data-part~="message-box"] textarea::placeholder {
-    color: var(--faint);
+    color: var(--muted);
 }
 
-/* Send: inside the box, at its end. */
+/* Send: at the end of the row under the box, quiet until there is something to send. */
 [data-part~="send-button"] {
-    position: absolute;
-    inset-block-start: 8px;
-    inset-inline-end: 8px;
-    width: 32px;
-    height: 32px;
     border-radius: var(--r-control);
     background: none;
     color: var(--faint);
@@ -515,23 +448,16 @@
 
 [data-part~="send-button"][data-state="ready"] {
     background: var(--clay);
-    color: #fff;
+    color: var(--accent-ink);
 }
 
-/* The buttons under the box: bare icons, the model on the far end. */
+/* The buttons under the box: bare icons, as the app has them. */
 [data-part~="composer-tools"] {
     padding-inline: 4px;
     padding-block: 6px 0;
 }
 
-[data-part~="composer-button"] {
-    border-color: transparent;
-    background: none;
-    color: var(--muted);
-}
-
 [data-part~="model-chip"] {
-    order: 99;
     --accent: var(--muted);
     border: 0;
     background: none;
@@ -555,7 +481,8 @@
 }
 
 @media (hover: hover) {
-    :is([data-part~="composer-button"], [data-part~="model-chip"]):hover {
+    [data-part~="model-chip"]:hover,
+    [data-part~="plan-chip"]:not([aria-pressed="true"]):hover {
         background: var(--card-2);
         color: var(--text);
     }
@@ -566,11 +493,7 @@
     color: var(--faint);
 }
 
-/* ─── The home screen: a greeting, not a dashboard ─── */
-
-[data-part~="home-logo"] {
-    display: none;
-}
+/* ─── The home screen: Pi's own π, a serif greeting ─── */
 
 [data-part~="home-facts"] {
     border: 0;
@@ -584,14 +507,6 @@
     font-weight: 400;
     letter-spacing: -0.015em;
     color: var(--text);
-}
-
-[data-part~="home-title"]::before {
-    content: "✻";
-    margin-inline-end: 0.35em;
-    color: var(--clay);
-    font-family: var(--sans);
-    font-size: 0.95em;
 }
 
 /* The words in it (plain elements) in the title's own color. */
@@ -618,7 +533,7 @@
 [data-part~="home-actions"] .button.primary {
     border-color: transparent;
     background: var(--clay);
-    color: #fff;
+    color: var(--accent-ink);
 }
 
 [data-part~="home-heading"] {
